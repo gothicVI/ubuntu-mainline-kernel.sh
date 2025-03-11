@@ -1,16 +1,17 @@
 # ubuntu-mainline-kernel.sh
 
-Bash script for Ubuntu (and derivatives as LinuxMint) to easily (un)install kernels from the [Ubuntu Kernel PPA](https://kernel.ubuntu.com/~kernel-ppa/mainline/).
+Bash script for Ubuntu (and derivatives such as LinuxMint) to easily (un)install kernels from the [Ubuntu Kernel PPA](https://kernel.ubuntu.com/~kernel-ppa/mainline/).
 
 ## Warnings
 
-:warning: Use this script at your own risk. Be aware that the kernels installed by this script are [unsupported](https://wiki.ubuntu.com/Kernel/MainlineBuilds#Support_.28BEWARE:_there_is_none.29)
+:warning: Use this script at your own risk. Be aware that the kernels installed by this script are [unsupported](https://wiki.ubuntu.com/Kernel/MainlineBuilds#Support_.28BEWARE:_there_is_none.29).
 
-:unlock: Do not use this script if you don't have to or don't know what you are doing. You won't be [covered](https://github.com/pimlie/ubuntu-mainline-kernel.sh/issues/32) by any security guarantees. The intended purpose by Ubuntu for the mainline ppa kernels is for debugging issues.
+:unlock: Do not use this script if you don't need to or don't know what you're doing. You won't be [covered](https://github.com/pimlie/ubuntu-mainline-kernel.sh/issues/32) by any security guarantees.
+Ubuntu's intended use for the mainline ppa kernels is for debugging.
 
-:information_source: We strongly advise to keep the default Ubuntu kernel installed as there is no safeguard that at least one kernel is installed on your system.
+:information_source: We strongly recommend that you leave the default Ubuntu kernel installed, as there is no guarantee that you will have at least one kernel installed on your system.
 
-## Install
+## Installing
 ```
 apt install wget
 wget https://raw.githubusercontent.com/pimlie/ubuntu-mainline-kernel.sh/master/ubuntu-mainline-kernel.sh
@@ -18,7 +19,7 @@ chmod +x ubuntu-mainline-kernel.sh
 sudo mv ubuntu-mainline-kernel.sh /usr/local/bin/
 ```
 
-If you want to automatically check for a new kernel version when you login:
+If you want to automatically check for a new kernel version when you log in:
 ```
 wget https://raw.githubusercontent.com/pimlie/ubuntu-mainline-kernel.sh/master/UbuntuMainlineKernel.desktop
 mv UbuntuMainlineKernel.desktop ~/.config/autostart/
@@ -26,76 +27,80 @@ mv UbuntuMainlineKernel.desktop ~/.config/autostart/
 
 ## SecureBoot
 
-> :warning: There is no support for creating and enrolling your own MOK. If you don't know how to do that then you could use the `mok-setup.sh` script from [berglh/ubuntu-sb-kernel-signing](https://github.com/berglh/ubuntu-sb-kernel-signing) to help you get started (at your own risk)
+> :warning: There is no support for creating and registering your own MOK. If you don't know how to do this, you can use the `mok-setup.sh` script from
+> [berglh/ubuntu-sb-kernel-signing](https://github.com/berglh/ubuntu-sb-kernel-signing) to get started (at your own risk).
 
-The script supports self signing the mainline kernels. Edit the script and set `sign_kernel=1` and
-update the paths to your MOK key & certificate. (The default paths are the ones as created by the `mok-setup.sh` script from [berglh/ubuntu-sb-kernel-signing](https://github.com/berglh/ubuntu-sb-kernel-signing))
+The script supports mainline kernel self-signing. Edit the script and add `sign_kernel=1` and update the paths to your MOK key & certificate.
+(The default paths are those created by the `mok-setup.sh` script from [berglh/ubuntu-sb-kernel-signing](https://github.com/berglh/ubuntu-sb-kernel-signing)).
 
 ## Usage
 ```
 Usage: ubuntu-mainline-kernel.sh -c|-l|-r|-u
 
-Download & install the latest kernel available from kernel.ubuntu.com
+Download and install the latest kernel available from kernel.ubuntu.com
 
 Arguments:
   -c               Check if a newer kernel version is available
-  -b [VERSION]     Build kernel VERSION locally and then install it (requires git & docker)
-  -i [VERSION]     Install kernel VERSION, see -l for list. You don't have to prefix
-                   with v. E.g. -i 4.9 is the same as -i v4.9. If version is
-                   omitted the latest available version will be installed
-  -l [SEARCH]      List locally installed kernel versions. If an argument to this
-                   option is supplied it will search for that
-  -r [SEARCH]      List available kernel versions. If an argument to this option
-                   is supplied it will search for that
-  -u [VERSION]     Uninstall the specified kernel version. If version is omitted,
-                   a list of max 10 installed kernel versions is displayed
-  --update         Update this script by redownloading it from github
+  -b [VERSION]     Build and install kernel VERSION locally (requires git & docker)
+  -i [VERSION]     Install kernel VERSION, see -l for list. You don't need to prefix
+                   with v. For example, -i 4.9 is the same as -i v4.9. If version is omitted
+                   is omitted, the latest available version will be installed.
+  -l [SEARCH]      List locally installed kernel versions. If an argument is given to this
+                   option, it will search for it.
+  -r [SEARCH]      List available kernel versions. If an argument is given to this option
+                   is given, it will search for them.
+  -u [VERSION]     Uninstall the given kernel version. If version is omitted,
+                   a list of up to 10 installed kernel versions will be displayed.
+  --update         Update this script by re-downloading it from github
   -h               Show this message
 
 Optional:
-  -p, --path DIR       The working directory, .deb files will be downloaded into
-                       this folder. If omitted, the folder /tmp/ubuntu-mainline-kernel.sh/
-                       is used. Path is relative from $PWD
-  -ll, --low-latency   Use the low-latency version of the kernel, only for amd64 & i386
-  -lpae, --lpae        Use the Large Physical Address Extension kernel, only for armhf
-  --snapdragon         Use the Snapdragon kernel, only for arm64
-  -do, --download-only Only download the deb files, do not install them
-  -ns, --no-signature  Do not check the gpg signature of the checksums file
+  -p, --path DIR       The working directory, .deb files will be downloaded to this
+                       folder. If omitted, the folder /tmp/ubuntu-mainline-kernel.sh/ will be used.
+                       will be used. Path is relative to $PWD
+  -ll, --low-latency   Use the low-latency version of the kernel, amd64 & i386 only
+  -lpae, --lpae        Use the Large Physical Address Extension kernel, armhf only
+  --snapdragon         Use the Snapdragon kernel, arm64 only
+  -do, --download-only Download the deb files only, do not install them
+  -ns, --no-signature  Do not check the gpg signature of the checksum file
   -nc, --no-checksum   Do not check the sha checksums of the .deb files
-  -d, --debug          Show debug information, all internal commands echo their output
-  --rc                 Also include release candidates
-  --yes                Assume yes on all questions (use with caution!)
+  -d, --debug          Show debug information, all internal commands will echo their output
+  --rc                 Include release candidates
+  --yes                Assume yes to all questions (use with care!)
 ```
 
-> :information_source: Since ~v5.18 Ubuntu does not publish low-latency mainline kernels anymore, see this [AskUbuntu](https://askubuntu.com/questions/1397410/where-are-latest-mainline-low-latency-kernel-packages) for more info
+> :information_source: As of ~v5.18, Ubuntu no longer releases low-latency mainline kernels, see this
+> [AskUbuntu](https://askubuntu.com/questions/1397410/where-are-latest-mainline-low-latency-kernel-packages) for more information.
 
 ## Elevated privileges
 
-This script needs elevated privileges when installing or uninstalling kernels.
+This script requires elevated privileges when installing or uninstalling kernels.
 
-Either run this script with sudo or configure the path to sudo within the script to sudo automatically
+Either run this script with sudo, or configure the path to sudo within the script to sudo automatically.
 
 ## Building kernels locally *(EXPERIMENTAL)*
 
-> :warning: YMMV, this is experimental support. Don't build kernel's if you don't know what you are doing
+> :warning: YMMV, this is experimental support. Do not build kernels unless you know what you're doing.
 
-> :warning: If the build fails, please debug yourself and create a PR with fixes if needed. Also if you don't know how to debug the build failure, then you probably shouldn't be building your own kernels!
+> :warning: If the build fails, please debug yourself and file a PR with fixes if necessary.
+> Also, if you don't know how to debug the build failure, you probably shouldn't be building your own kernels!
 
-> :information_source: There are no plans to add full fledged support for building kernels. This functionality might stay experimental for a long time
+> :information_source: There are no plans to add full support for building kernels. This functionality may remain experimental for a long time.
 
-The mainline kernel ppa only supports the latest Ubuntu release. But newer Ubuntu releases could use newer library versions then the current LTS releases (f.e. both libssl or glibc version issues have existed in the past). Which means that you won't be able to (fully) install the newer kernel anymore.
+The mainline kernel ppa only supports the latest Ubuntu release. But newer Ubuntu releases might use newer library versions than the current LTS releases
+(e.g. both libssl and glibc version issues have existed in the past). This means that you won't be able to (fully) install the newer kernel.
 
-When that happens you could try to build your own kernel releases by using the `--build VERSION` argument (f.e. `-b 6.7.0`).
+If this happens, you can try to build your own kernel versions using the `--build VERSION` argument (e.g. `-b 6.7.0`).
 
-Kernel building support is provided by [TuxInvader/focal-mainline-builder](https://github.com/TuxInvader/focal-mainline-builder) so requires:
+Kernel building support is provided by [TuxInvader/focal-mainline-builder](https://github.com/TuxInvader/focal-mainline-builder), so this is required:
 
 - git & docker
-- quite a bit of free disk space (~3GB to checkout the kernel source, maybe ~10GB or more during build)
-- can take quite a while depending on how fast your computer is
+- quite a bit of free disk space (~3GB to check out the kernel sources, maybe ~10GB or more during build)
+- may take quite a while, depending on how fast your machine is
 
 ## Example output
 
-Install latest version:
+Install the latest version:
 ```
  ~ $ sudo ubuntu-mainline-kernel.sh -i
 Finding latest version available on kernel.ubuntu.com
@@ -112,7 +117,7 @@ Installing 3 packages
 [sudo] password for pimlie:
 Cleaning up work folder
 ```
-Uninstall a version from a list
+Uninstalling a version from a list
 ```
  ~ $ sudo ubuntu-mainline-kernel.sh -u
 Which kernel version do you wish to uninstall?
@@ -133,16 +138,16 @@ Kernel v4.8.6 successfully purged
 * bash
 * gnucoreutils
 * dpkg
-* wget (since 2018-12-14 as kernel ppa is now https only)
+* wget (as of 2018-12-14 as the kernel ppa is now https only)
 
 ## Optional dependencies
 
-* libnotify-bin (to show notify bubble when new version is found)
+* libnotify-bin (to show notification bubble when new version is found)
 * bsdmainutils (format output of -l, -r with column)
 * gpg (to check the signature of the checksum file)
-* sha1sum/sha256sum (to check the .deb checksums)
+* sha1sum/sha256sum (to check .deb checksums)
 * sbsigntool (to sign kernel images for SecureBoot)
 * sudo
 
 ## Known issues (with workarounds)
-- GPG is unable to import the key behind a proxy: #74
+- GPG is unable to import the key behind a proxy: [#74](https://github.com/pimlie/ubuntu-mainline-kernel.sh/issues/74)
